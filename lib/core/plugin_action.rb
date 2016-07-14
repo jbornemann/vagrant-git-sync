@@ -16,6 +16,7 @@ module VagrantGitSyncModule
         ui = env[:env].ui
         if workspace.unsupported_workspace
           ui.error 'vagrant-git-sync plugin has detected an unsupported workspace in Vagrant working directory. Make sure you have Git installed, with Git managing your Vagrant workspace'
+          return
         end
         ui.output 'Checking environment..'
         unless workspace.is_master?
