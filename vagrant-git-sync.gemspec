@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'vagrant-git-sync'
-  spec.version       = '1.0'
+  spec.version       = '1.0.1'
   spec.authors       = ['Jeff Bornemann']
   spec.email         = ['bornemannjs@gmail.com']
 
