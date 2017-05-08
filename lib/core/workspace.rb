@@ -9,10 +9,13 @@ module VagrantGitSyncModule
       def initialize(env)
         @env = env
         @vagrant_cwd = env[:env].cwd.to_s.strip.chomp('/')
-        if system('git rev-parse 2> /dev/null > /dev/null')==true and Workspace.git_installed
-          @unsupported_workspace = false
-        else
-          @unsupported_workspace = true
+        Dir.chdir(@vagrant_cwd) do
+          in_work_tree = %x(git rev-parse --is-inside-work-tree 2> /dev/null).strip
+          if in_work_tree == 'true' and Workspace.git_installed
+            @unsupported_workspace = false
+          else
+            @unsupported_workspace = true
+          end
         end
       end
 
