@@ -3,11 +3,15 @@ require_relative '../../lib/core/workspace'
 module Kernel
 
   def self.system_expected_result(function)
-    @@function = function
+    if defined? @@functions
+      @@functions = @@functions.merge(function)
+    else
+      @@functions = function
+    end
   end
 
   define_method(:'`') do |args|
-    @@function[args]
+    @@functions[args]
   end
 end
 
@@ -16,17 +20,18 @@ RSpec.describe VagrantGitSyncModule::Core::Workspace do
   context 'Constructing the workspace correctly' do
 
    [
-       {:which_git => ''            , :is_git_repo => true, :unsupported => true},
-       {:which_git => '/usr/bin/git', :is_git_repo => false,:unsupported => true},
-       {:which_git => '/usr/bin/git', :is_git_repo => true, :unsupported => false}
+       {:which_git => ''            , :is_git_repo => 'true', :unsupported => true},
+       {:which_git => '/usr/bin/git', :is_git_repo => 'false',:unsupported => true},
+       {:which_git => '/usr/bin/git', :is_git_repo => 'true', :unsupported => false}
    ].each do |variant|
      it "Only supports Git workspaces. #{variant}" do
        Kernel.system_expected_result({'which git' => variant[:which_git]})
+       Kernel.system_expected_result({'git rev-parse --is-inside-work-tree 2> /dev/null' => variant[:is_git_repo]})
+       allow(Dir).to receive(:chdir).and_yield
        env = instance_double('Vagrant::Environment')
        #Make sure we clean up dangling whitespace, or trailing slash in case env is coming from user (like env variable)
        allow(env).to receive(:cwd).and_return('/test/vagrant/ ')
        env_map = {:env => env}
-       allow(File).to receive(:exist?).with('/test/vagrant/.git').and_return(variant[:is_git_repo])
 
        workspace = VagrantGitSyncModule::Core::Workspace.new(env_map)
 
@@ -37,10 +42,11 @@ RSpec.describe VagrantGitSyncModule::Core::Workspace do
 
   def with_workspace
     Kernel.system_expected_result({'which git' => '/usr/bin/git'})
+    Kernel.system_expected_result({'git rev-parse --is-inside-work-tree 2> /dev/null' => 'true'})
+    allow(Dir).to receive(:chdir).and_yield
     env = instance_double('Vagrant::Environment')
     allow(env).to receive(:cwd).and_return('/test/vagrant')
     env_map = {:env => env}
-    allow(File).to receive(:exist?).with('/test/vagrant/.git').and_return(true)
     workspace = VagrantGitSyncModule::Core::Workspace.new(env_map)
     yield workspace
   end
