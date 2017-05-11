@@ -8,7 +8,7 @@ We can eliminate this manual step by allowing Vagrant to reason about, and sync 
 This requires some precaution that vagrant-git-sync manages for us:
 
 - Is a feature branch being worked on (Are we off master)? Is the index dirty? If so, we probably don't want to update, and introduce surprises to the developer. vagrant-git-sync handles these cases automatically, and tries to not get in the way. Currently a feature branch is detected if the local branch is not "master".
-- Do we have a stable internet connection? Can we reach the remote? vagrant-git-sync will try to bail out as early if it detects a less than steller connection. We don't want the plugin to introduce long pauses in workflow due to connectivity issues. 
+- Do we have a stable internet connection? Can we reach the remote? vagrant-git-sync will try to bail out as early as possible if it detects a less than steller connection. We don't want the plugin to introduce long pauses in workflow due to connectivity issues. 
 
 
 vagrant-git-sync works by injecting middleware very early on in the Vagrant lifecycle. This allows us to update any Vagrant configuration (Vagrantfile, Puppet, Chef, etc) before configuration is actually loaded by Vagrant.  
