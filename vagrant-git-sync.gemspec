@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'A Vagrant plugin that allows teams to automatically keep Git-backed environments in sync'
   spec.homepage      = 'https://github.com/jbornemann/vagrant-git-sync'
-  spec.license       = 'Apache 2.0'
+  spec.license       = 'Apache-2.0'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'exe'
