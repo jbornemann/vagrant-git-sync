@@ -9,7 +9,7 @@ module VagrantGitSyncModule
       def initialize(env)
         @env = env
         @vagrant_cwd = env[:env].cwd.to_s.strip.chomp('/')
-        if File.exist?("#{@vagrant_cwd}/.git") and Workspace.git_installed
+        if system('git rev-parse 2> /dev/null > /dev/null')==true and Workspace.git_installed
           @unsupported_workspace = false
         else
           @unsupported_workspace = true
