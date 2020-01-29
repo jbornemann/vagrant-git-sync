@@ -64,7 +64,7 @@ module VagrantGitSyncModule
         else
           result = %x(which git).strip
         end
-        return not result.empty?
+        not result.empty?
       end
 
       private
