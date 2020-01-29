@@ -10,7 +10,12 @@ module VagrantGitSyncModule
         @env = env
         @vagrant_cwd = env[:env].cwd.to_s.strip.chomp('/')
         Dir.chdir(@vagrant_cwd) do
-          in_work_tree = %x(git rev-parse --is-inside-work-tree 2> $null).strip
+          in_work_tree = ""
+          if Vagrant::Util::Platform.windows? then
+            in_work_tree = %x(git rev-parse --is-inside-work-tree 2> $null).strip
+          else
+            in_work_tree = %x(git rev-parse --is-inside-work-tree 2> /dev/null).strip
+          end
           if in_work_tree == 'true' and Workspace.git_installed
             @unsupported_workspace = false
           else
@@ -53,7 +58,13 @@ module VagrantGitSyncModule
       end
 
       def self.git_installed
-        not %x(where.exe git).strip.empty?
+        result = ""
+        if Vagrant::Util::Platform.windows? then
+          result = %x(where.exe git).strip
+        else
+          result = %x(which git).strip
+        end
+        return not result.empty?
       end
 
       private
